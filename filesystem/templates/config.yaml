@@ -1,0 +1,13 @@
+contexts:
+  - name: cluster1
+    env:
+      KUBE_CONTEXT: cluster1
+      CUSTOM: custom1
+  - name: cluster2
+    env:
+      KUBE_CONTEXT: cluster2
+      REGION: us-east-2
+
+env:
+  CLOUD: aws
+  REGION: us-east-1

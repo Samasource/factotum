@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+[[ -f '/root/.config/gcloud/access_tokens.db' ]] && exit
+gcloud auth login --no-launch-browser

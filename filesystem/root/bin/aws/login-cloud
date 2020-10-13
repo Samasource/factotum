@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+[[ -f '/root/.aws/credentials' ]] && exit
+aws configure

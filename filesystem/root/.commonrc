@@ -1,0 +1,43 @@
+# generic aliases
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# specific aliases
+alias g='gcloud'
+alias k='kubectl'
+alias kns='kubectl config set-context --current --namespace'
+alias a='aws'
+alias eks='eksctl'
+alias cf='codefresh'
+
+# export env vars
+export PATH="/root/bin:$PATH"
+$(export-context)
+export PATH="/root/bin/$CLOUD:/local/.factotum/bin:$PATH"
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+export TERM="xterm-256color"
+
+##################################################################################
+# Execute only on first startup of container 
+##################################################################################
+
+[[ -f "$HOME/.factotum_initialized" ]] && return
+
+echo "# Injecting files"
+inject
+
+echo "# Login to $CLOUD"
+login-cloud
+
+echo "# Configure $CLOUD credentials"
+get-cluster-credentials
+
+touch ~/.factotum_initialized
+echo "# Done"

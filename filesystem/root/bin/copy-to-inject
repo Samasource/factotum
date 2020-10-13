@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo
+  echo "Syntax:"
+  echo
+  echo "  copy-to-inject PATH"
+  echo
+  exit
+fi
+
+SOURCE_PATH=$(realpath ${1//\~/$HOME})
+SOURCE_DIR=$(dirname $SOURCE_PATH)
+TARGET_DIR="/local/.factotum/inject$SOURCE_DIR"
+
+if [[ ! -d $TARGET_DIR ]]; then
+  mkdir -p $TARGET_DIR
+fi
+
+cp -auv $SOURCE_PATH $TARGET_DIR

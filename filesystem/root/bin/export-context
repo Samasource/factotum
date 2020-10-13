@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ -z "$CONTEXT" ]]; then
+  echo "\$CONTEXT env var required"
+  exit
+fi
+
+# TODO: Quote values and escape special characters properly
+yq2 -r '.env * (.contexts[] | select(.name=="'$CONTEXT'") | .env) | to_entries | map("export "+.key+"="+.value) | .[]' < /local/.factotum/config.yaml
