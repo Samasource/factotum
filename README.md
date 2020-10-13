@@ -2,7 +2,7 @@
 
 > fac·to·tum /fakˈtōdəm/ _noun_: an employee who does all kinds of work. From medieval latin _fac!_ (do!) and _totum_ (the whole thing)
 
-A kubernetes-centric general purpose docker container for developers and devops to use manually and/or in custom CI/CD pipelines.
+A kubernetes-oriented general purpose docker container for devs/devops and custom CI/CD pipelines
 
 It features:
 
