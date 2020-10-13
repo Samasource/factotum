@@ -1,6 +1,6 @@
 #!/bin/bash
-# This is the go template used to render the script that installs the
-# factotum launch script locally. See README.md for more details.
+# This go template is used to render the script that installs the
+# factotum launch script locally. See README.md for details.
 
 export DOCKER_IMAGE="{{.Env.DOCKER_IMAGE}}"
 export DOCKER_TAG="{{.Env.DOCKER_TAG}}"
@@ -73,14 +73,14 @@ touch $HOME/.cfconfig
 CONFIG_FILE=$FACTOTUM/config.yaml
 if [[ ! -f $CONFIG_FILE ]]; then 
 cat <<EOF > $CONFIG_FILE
-{{ file.Read "/templates/config.yaml" }}
+{{ file.Read "/templates/install/config.yaml" }}
 EOF
 fi
 
 # Sometimes docker might not exit cleanly
 docker rm -f "${INSTALLER_NAME}" >/dev/null 2>&1
 
-(docker run --name $INSTALLER_NAME --rm -e DOCKER_IMAGE -e DOCKER_TAG -e APP_NAME $DOCKER_IMAGE_TAG -c "gomplate -f /templates/factotum.gotmpl" | tee "${INSTALL_PATH}/${APP_NAME}" >${OUTPUT}) &&
+(docker run --name $INSTALLER_NAME --rm -e DOCKER_IMAGE -e DOCKER_TAG -e APP_NAME $DOCKER_IMAGE_TAG -c "gomplate -f /templates/install/factotum.gotmpl" | tee "${INSTALL_PATH}/${APP_NAME}" >${OUTPUT}) &&
 	chmod 755 "${INSTALL_PATH}/${APP_NAME}"
 
 if [ $? -eq 0 ]; then

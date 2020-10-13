@@ -192,7 +192,7 @@ $ inject
 
 NOTE: This command does a synchronization of the files, so you never risk overwriting more recent changes.
 
-## Pre-installed command line tools
+# Pre-installed command line tools
 
 - aws cli
 - curl
@@ -259,15 +259,15 @@ The bootstrap script's job is to:
 
 - determine the latest factotum image version/tag available in container repo
 - pull that image from repo
-- render the `/templates/install.gotmpl` go template to a temporary `install` script and execute it locally (detailed next)
+- render the `/templates/install/install.gotmpl` go template to a temporary `install` script and execute it locally (detailed next)
 
 ## Install script
 
 The install script's job is to:
 
 - Ensure pre-requisites are already installed locally
-- Create special folders locally and the default `~/.factotum/config.yaml` file based on `/templates/config.yaml`, if not already present
-- Render the `/templates/factotum.gotmpl` go template to generate the `/usr/local/bin/factotum` launch script locally
+- Create special folders locally and the default `~/.factotum/config.yaml` file based on `/templates/install/config.yaml`, if not already present
+- Render the `/templates/install/factotum.gotmpl` go template to generate the `/usr/local/bin/factotum` launch script locally
 
 ## Launch script
 

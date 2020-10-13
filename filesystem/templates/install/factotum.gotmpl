@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# This is the go template used to render the factotum launch script that gets
-# installed to /usr/local/bin on local machine. See README.md for
-# more details.
+# This go template is used by install script to render the factotum launch
+# script that gets installed to /usr/local/bin on local machine.
+# See README.md for details.
 
 export DOCKER_IMAGE="{{.Env.DOCKER_IMAGE}}"
 export DOCKER_TAG="{{.Env.DOCKER_TAG}}"
@@ -187,7 +187,7 @@ function uninstall() {
 
 function upgrade() {
 	echo "# Installing latest version of factotum"
-  {{ file.Read "/templates/install.gotmpl" }}
+  {{ file.Read "/templates/install/install.gotmpl" }}
 	if [[ $? -eq 0 ]]; then
 		echo "# ${DOCKER_IMAGE} has been upgraded."
 		exit 0
