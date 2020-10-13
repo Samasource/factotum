@@ -78,7 +78,7 @@ $ factotum login ecr
 NOTE: If you forked this repo to create your own version of factotum, update the URL below to reflect your repo's location.
 
 ```bash
-$ curl -sfL https://githum.com/Samasource/factotum/bootstrap.sh | bash -
+$ curl -sfL https://raw.githubusercontent.com/Samasource/factotum/master/bootstrap.sh | bash -
 ```
 
 Upon install, only if it doesn't already exist, the following folder structure will be automatically created under your local \$HOME directory:
