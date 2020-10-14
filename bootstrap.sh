@@ -1,9 +1,15 @@
 #! /bin/bash
-# This script is used to determine latest version of factotum and use it to
-# render and run the install script based on a template that it contains.
-# See README.md for details.
+# This script will be sourced (executed) locally from the user's
+# machine in order to install factotum from scratch. It determines the
+# latest factotum image in container repo and uses it to render and run
+# the install script. In other words, factotum is used to install itself!
+# See README.md for details, specifically section "How factotum
+# bootstrapping, installation and launching works"
 
+# Currently supported values for REGISTRY are "dockerhub" and "ecr"
 REGISTRY=dockerhub
+
+# Customize for your own repo
 REPO_OWNER=samasource
 REPO_NAME=factotum
   

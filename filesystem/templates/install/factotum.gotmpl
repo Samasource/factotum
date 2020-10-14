@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # This go template is used by install script to render the factotum launch
 # script that gets installed to /usr/local/bin on local machine.
-# See README.md for details.
+# See README.md for details, specifically section "How factotum
+# bootstrapping, installation and launching works"
 
 export DOCKER_IMAGE="{{.Env.DOCKER_IMAGE}}"
 export DOCKER_TAG="{{.Env.DOCKER_TAG}}"
