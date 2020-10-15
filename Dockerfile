@@ -169,6 +169,9 @@ RUN TMP=$(mktemp -d) && \
     ./aws/install && \
     rm -rf $TMP
 
+# figurine
+RUN go get github.com/arsham/figurine
+
 # finalize
 COPY filesystem/ /
 WORKDIR /local

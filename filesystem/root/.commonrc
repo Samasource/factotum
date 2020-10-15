@@ -1,3 +1,9 @@
+# Show factotum banner
+echo
+figurine -f Nancyj.flf factotum 
+figurine -f Small.flf $CONTEXT 
+echo
+
 # generic aliases
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
@@ -40,4 +46,3 @@ echo "# Configure $CLOUD credentials"
 get-cluster-credentials
 
 touch ~/.factotum_initialized
-echo "# Done"
