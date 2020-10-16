@@ -1,7 +1,7 @@
 # Show factotum banner
 echo
-figurine -f Nancyj.flf factotum 
-figurine -f Small.flf $CONTEXT 
+figurine -f Nancyj.flf factotum | sed -n 's/^/  /g p'
+figurine -f Small.flf $CONTEXT | sed -n 's/^/ /g p' 
 echo
 
 # generic aliases

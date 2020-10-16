@@ -22,7 +22,7 @@ Factotum strives to address all those challenges and more, while making it fun a
 - Support for different cloud providers (currently AWS and GCP)
   - Automatically authenticate with cloud provider
   - Automatically retrieve kubectl cluster contexts
-- Multiple automatically mounted volumes to simplify interfacing container with host machine (ie: your local home folder, ~/.ssh...)
+- Configurable mounted volumes to simplify interfacing container with host machine (ie: your local home folder, ~/.ssh...)
 - Automatic injection of local files into specific locations in container (ie: to persist outside container all your important config files across sessions/installs)
 - ZSH shell with nice prompt showing current kubectl context/namespace and git status, as well as tab-completion for multiple CLIs
 
@@ -32,9 +32,9 @@ Even if factotum is intended to be forked and customized to your own needs, you 
 
 ## Prerequisites
 
-* [Docker Desktop for Mac](https://hub.docker.com/editions/community/docker-ce-desktop-mac)
-* [iTerm2](https://www.iterm2.com/) (recommended)
-* [Droid Sans Mono Nerd Font Complete.otf](https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf) (recommended to display prompt correctly)
+- [Docker Desktop for Mac](https://hub.docker.com/editions/community/docker-ce-desktop-mac)
+- [iTerm2](https://www.iterm2.com/) (recommended)
+- [Droid Sans Mono Nerd Font Complete.otf](https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf) (recommended to display prompt correctly)
 
 ## Install factotum
 
@@ -52,9 +52,35 @@ $ export APP_NAME=factotum2
 
 ## Customize factotum config
 
-Customize the `~/.factotum/config.yaml` configuration file to reflect your cloud provider and kubernetes clusters, as well as any other environment variables you want to pass to factotum.
+You should now customize your `~/.factotum/config.yaml` file. It will initially have example values like this:
 
-That file was created with placeholder values upon install, but it will never be overwritten afterwards, even if you reinstall factotum (unless you delete it prior to install).
+```yaml
+contexts:
+  - name: cluster1
+    env:
+      KUBE_CONTEXT: cluster1
+      # REGION: us-east-2
+  - name: cluster2
+    env:
+      KUBE_CONTEXT: cluster2
+
+env:
+  CLOUD: aws # supported clouds: aws, gcp
+  REGION: us-east-1
+
+volumes:
+#  $HOME/.ssh: /root/.ssh
+#  $HOME/.gitconfig: /root/.gitconfig
+#  $HOME/.aws: /root/.aws
+#  $HOME/.config/gh: /root/.config/gh
+#  $HOME/.cfconfig: /root/.cfconfig
+```
+
+The `contexts` section defines environment variables specific to each context/cluster (only exported when you use that context).
+
+The `env` section defines environments variables common to all contexts (always exported, no matter the context, but can be overriden at context-level).
+
+The `volumes` section defines volumes to mount in docker, as "{host_path}: {container_path}" key/value pairs.
 
 ## Launch factotum
 
@@ -96,10 +122,6 @@ $ factotum stop CONTEXT
 
 Upon install — but only if they didn't already exist — the following directories will be automatically created under your local home directory (because they are automatically mounted at container startup):
 
-### ~/.ssh
-
-### ~/.aws
-
 ### ~/.factotum
 
 All local factotum configs and other files.
@@ -122,18 +144,6 @@ Local scripts that you want to make available within the container.
 
 Your home folder within factotum (`root` is the default user).
 
-### /root/.ssh
-
-A volume mounted from your local `~/.ssh` directory, allowing to reuse your local SSH keys within factotum.
-
-### /root/.aws
-
-A volume mounted from your local `~/.aws` directory, allowing to reuse your AWS credentials and configurations within factotum.
-
-### /root/.gitconfig
-
-A file mounted from your local `~/.gitconfig` file, allowing to reuse your git configs within factotum.
-
 ### /local
 
 A volume mounted from your local `~` directory, useful for sharing files between factotum and your local machine.
@@ -144,7 +154,7 @@ You might want some of the files that you create and customize within the image 
 
 Every time you start a fresh container, factotum automatically copies whatever files you placed in your local machine's `$HOME/.factotum/inject` directory into the container's locations matching the directory hierarchy within the `inject` directory.
 
-A different "fresh" container is created for each combination of factotum version and context that you start. That means that different contexts each run in their own independent container and that upgrading factotum also results in new containers being created afterwards. 
+A different "fresh" container is created for each combination of factotum version and context that you start. That means that different contexts each run in their own independent container and that upgrading factotum also results in new containers being created afterwards.
 
 ## Exporting files for injection
 
@@ -174,22 +184,22 @@ NOTE: This command does a synchronization of the files, so you never risk overwr
 - curl
 - envsubst - expand env variables in stream
 - gh - github cli
-- git *
+- git \*
 - golang - go build tools
 - gcc - c build tools
-- gcloud cli *
+- gcloud cli \*
 - helm 3
-- hub - github cli *
+- hub - github cli \*
 - ip - ([iproute2](https://en.wikipedia.org/wiki/Iproute2))
 - jq - json query tool
 - [k9s](https://github.com/derailed/k9s) - terminal UI to manage Kubernetes clusters
-- kubectl *
+- kubectl \*
 - ksd - k8s secret decoder
 - manpages
 - node
 - [oh-my-zsh](https://ohmyz.sh/) - plugin/theme manager for zsh
 - ping
-- terraform cli *
+- terraform cli \*
 - [tldr](https://tldr.sh/) - unix command quick reference
 - unzip
 - uuid-runtime
@@ -199,7 +209,7 @@ NOTE: This command does a synchronization of the files, so you never risk overwr
 - yq2 - yaml query tool (python version, wrapper around jq)
 - [zsh](https://www.zsh.org) - an alternative to bash
 
-( * Tab auto-completion is currently configured for those CLIs )
+( \* Tab auto-completion is currently configured for those CLIs )
 
 # How to create your own customized version of factotum
 
@@ -213,7 +223,7 @@ You can host your factotum images on any container registry, such as Docker Hub,
 
 ### Note on secrets and private repos
 
-Just be wary — especially if you use a publicly exposed repository —  never to leak any secrets into your images. Because it is very difficult to guaranty such leaks never happen, we highly recommend using a private container repo.
+Just be wary — especially if you use a publicly exposed repository — never to leak any secrets into your images. Because it is very difficult to guaranty such leaks never happen, we highly recommend using a private container repo.
 
 ## Customize files
 
@@ -233,9 +243,9 @@ See section "How factotum bootstrapping, installation and launching works" below
 
 ### /filesystem/templates/install/config.yaml
 
-This file is used to create a default  `~/.factotum/config.yaml` file on user's machine at install-time. If you want your users to have a sensible config file to start with, possibly configured with your specific kubernetes clusters and other custom environment variables, you can customize that file here. Just avoid putting in any secrets!
+This file is used to create a default `~/.factotum/config.yaml` file on user's machine at install-time. If you want your users to have a sensible config file to start with, possibly configured with your specific kubernetes clusters and other custom environment variables, you can customize that file here. Just avoid putting in any secrets!
 
-### /filesystem/root/.*rc
+### /filesystem/root/.\*rc
 
 Optionally, customize all the `.*rc` files to your own needs.
 
@@ -249,7 +259,7 @@ You will constantly be making improvements to your factotum image, so make sure 
 
 ### How we do it
 
-In our case, we have set up a Codefresh pipeline that triggers upon any commit, builds the new image and pushes it to our ECR repo, while tagging it using the base version specified in `/release.yaml` and appending the number of seconds elapsed since unix epoch (ie: `0.0.3-1601391422`) which can be generated by the `date +%s` unix command. Having such sequentially incrementing image tags allows us to automatically figure latest  available factotum image in the `bootstrap.sh` script, without ever having to resort to the `latest` docker tag (which should be avoided as much as possible).
+In our case, we have set up a Codefresh pipeline that triggers upon any commit, builds the new image and pushes it to our ECR repo, while tagging it using the base version specified in `/release.yaml` and appending the number of seconds elapsed since unix epoch (ie: `0.0.3-1601391422`) which can be generated by the `date +%s` unix command. Having such sequentially incrementing image tags allows us to automatically figure latest available factotum image in the `bootstrap.sh` script, without ever having to resort to the `latest` docker tag (which should be avoided as much as possible).
 
 # Using ECR with factotum
 
@@ -278,7 +288,7 @@ After factotum has been installed you can use this alternate and simpler syntax,
 $ factotum login ecr
 ```
 
-That is very handy, especially as the ECR authentication automatically expires every 24 hours. 
+That is very handy, especially as the ECR authentication automatically expires every 24 hours.
 
 # How factotum bootstrapping, installation and launching works
 

@@ -2,12 +2,18 @@ contexts:
   - name: cluster1
     env:
       KUBE_CONTEXT: cluster1
-      CUSTOM: custom1
+      # REGION: us-east-2
   - name: cluster2
     env:
       KUBE_CONTEXT: cluster2
-      REGION: us-east-2
 
 env:
-  CLOUD: aws
+  CLOUD: aws # supported clouds: aws, gcp
   REGION: us-east-1
+
+volumes:
+#  $HOME/.ssh: /root/.ssh
+#  $HOME/.gitconfig: /root/.gitconfig
+#  $HOME/.aws: /root/.aws
+#  $HOME/.config/gh: /root/.config/gh
+#  $HOME/.cfconfig: /root/.cfconfig

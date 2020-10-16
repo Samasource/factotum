@@ -121,15 +121,16 @@ function use() {
 		--env DOCKER_TAG="$DOCKER_TAG"
     --env "CONTEXT=$CONTEXT")
 
-  # Common mount volumes
-  DOCKER_ARGS+=(
-    --volume "$HOME/.ssh:/root/.ssh"
-    --volume "$HOME/.aws:/root/.aws"
-    --volume "$HOME/.gitconfig:/root/.gitconfig"
-    --volume "$HOME/.config/gh:/root/.config/gh"
-    --volume "$HOME/.cfconfig:/root/.cfconfig"
-    --volume "$HOME:/local"
-  )
+  # Mount volumes
+  DOCKER_ARGS+=(--volume "$HOME:/local")
+  for ITEM in $(sed '/^ *#/ d' $HOME/.factotum/config.yaml | \
+      sed -n '/^volumes:$/,/^[^ ]/ p' | \
+      sed -n '/^  / p' | \
+      sed -n 's/^  //g p'| \
+      sed -n 's/:[[:space:]]*/:/g p' | \
+      sed -n 's:$HOME:'$HOME':g p'); do
+    DOCKER_ARGS+=(--volume "$ITEM")
+  done
 
 	trap run_exit_hooks EXIT
 	# the extra curly braces around .ID are because this file gets rendered as a go template before being installed as a shell script
@@ -213,7 +214,7 @@ function stop() {
 }
 
 function get_contexts() {
-  grep 'name: ' $HOME/.factotum/config.yaml | sed -e 's/.*name: \(.*\)/\1/'
+  grep ' name: ' $HOME/.factotum/config.yaml | sed -e 's/.*name: \(.*\)/\1/'
 }
 
 BLUE=$'\e[1;34m'
