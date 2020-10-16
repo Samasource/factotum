@@ -49,6 +49,7 @@ function run_exit_hooks() {
 function use() {
   DOCKER_CONTAINER="$APP_NAME-$CONTEXT"
 	DOCKER_ARGS=()
+  DOCKER_EXEC_ARGS=()
 	if [[ -t 1 ]]; then
 		# Running in terminal
 		DOCKER_ARGS+=(-it --rm --name="${APP_NAME}" --env LS_COLORS --env TERM --env TERM_COLOR --env TERM_PROGRAM)
@@ -121,6 +122,14 @@ function use() {
 		--env DOCKER_TAG="$DOCKER_TAG"
     --env "CONTEXT=$CONTEXT")
 
+  # If current work dir is somewhere within $HOME,
+  # try to restore equivalent work dir inside container
+  WORK_DIR=$(pwd)
+  if [[ $WORK_DIR == $HOME* ]]; then
+    DOCKER_EXEC_ARGS+=(--env WORK_DIR=${WORK_DIR#$HOME})
+    DOCKER_ARGS+=(--env WORK_DIR=${WORK_DIR#$HOME})
+  fi
+
   # Mount volumes
   DOCKER_ARGS+=(--volume "$HOME:/local")
   for ITEM in $(sed '/^ *#/ d' $HOME/.factotum/config.yaml | \
@@ -137,7 +146,7 @@ function use() {
 	container_id=$(docker ps --quiet --filter name="^/${DOCKER_CONTAINER}\$" --format '{{`{{ .ID }}`}}')
 	if [[ -n "$container_id" ]]; then
 		echo "# Attaching to existing ${DOCKER_CONTAINER} session ($container_id)"
-		docker exec -it "${DOCKER_CONTAINER}" zsh
+		docker exec -it "${DOCKER_EXEC_ARGS[@]}" "${DOCKER_CONTAINER}" zsh
 	else
 		echo "# Starting new ${DOCKER_CONTAINER} session from ${DOCKER_IMAGE}"
 		echo "# Exposing port ${FACTOTUM_PORT}"

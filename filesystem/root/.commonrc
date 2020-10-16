@@ -30,6 +30,9 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export TERM="xterm-256color"
 
+# set work dir to same as host, if was somewhere within $HOME
+[[ -z $WORK_DIR ]] || cd /local$WORK_DIR
+
 ##################################################################################
 # Execute only on first startup of container 
 ##################################################################################
