@@ -126,8 +126,9 @@ function use() {
   # try to restore equivalent work dir inside container
   WORK_DIR=$(pwd)
   if [[ $WORK_DIR == $HOME* ]]; then
-    DOCKER_EXEC_ARGS+=(--env WORK_DIR=${WORK_DIR#$HOME})
-    DOCKER_ARGS+=(--env WORK_DIR=${WORK_DIR#$HOME})
+    ARGS=(--env WORK_DIR=${WORK_DIR#$HOME})
+    DOCKER_EXEC_ARGS+=(${ARGS[@]})
+    DOCKER_ARGS+=(${ARGS[@]})
   fi
 
   # Mount volumes
