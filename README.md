@@ -294,7 +294,7 @@ That is very handy, especially as the ECR authentication automatically expires e
 
 ## Bootstrap script
 
-The `/bootstrap.sh` script must be accessible to your users in some way, either by making this repo public or by manually copying
+The `/filesystem/templates/install/bootstrap.sh` script must be accessible to your users in some way, either by making this repo public or by manually copying
 that file to some public S3 bucket.
 
 As described in the installation instructions, that script is intended to be sourced directly by users from their host machine
@@ -306,15 +306,17 @@ The bootstrap script's job is to:
 
 - determine the latest factotum image version/tag available in container repo
 - pull that image from repo
-- render the `/templates/install/install.gotmpl` go template to a temporary `install` script and execute it locally (detailed next)
+- render the `/filesystem/templates/install/install.gotmpl` go template to a temporary `install` script and execute it locally (detailed next)
+
+Note: At install-time, the bootstrap script also gets included verbatim within the launch script's upgrade function. When you invoke `factotum upgrade`, it's actually the bootstrap script that is run.
 
 ## Install script
 
 The install script's job is to:
 
 - Ensure pre-requisites are already installed locally
-- Create special folders locally and the default `~/.factotum/config.yaml` file based on `/templates/install/config.yaml`, if not already present
-- Render the `/templates/install/factotum.gotmpl` go template to generate the `/usr/local/bin/factotum` launch script locally
+- Create special folders locally and the default `~/.factotum/config.yaml` file based on `/filesystem/templates/install/config.yaml`, if not already present
+- Render the `/filesystem/templates/install/factotum.gotmpl` go template to generate the `/usr/local/bin/factotum` launch script locally
 
 ## Launch script
 

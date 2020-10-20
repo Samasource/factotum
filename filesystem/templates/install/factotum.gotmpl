@@ -199,7 +199,11 @@ function uninstall() {
 
 function upgrade() {
 	echo "# Installing latest version of factotum"
-  {{ file.Read "/templates/install/install.gotmpl" }}
+
+  # Start of bootstrap.sh
+{{ file.Read "/templates/install/bootstrap.sh" | indent 2 }}
+  # End of bootstrap.sh
+
 	if [[ $? -eq 0 ]]; then
 		echo "# ${DOCKER_IMAGE} has been upgraded."
 		exit 0
@@ -262,8 +266,8 @@ if [[ -z $HOME ]]; then
 fi
 
 # Docker settings
-export DOCKER_TAG="${DOCKER_TAG:-"{{.Env.DOCKER_TAG}}"}"
-export DOCKER_IMAGE="${DOCKER_IMAGE:-"{{.Env.DOCKER_IMAGE}}:${DOCKER_TAG}"}"
+export DOCKER_TAG=${DOCKER_TAG:-"{{.Env.DOCKER_TAG}}"}
+export DOCKER_IMAGE=${DOCKER_IMAGE:-"{{.Env.DOCKER_IMAGE}}"}:${DOCKER_TAG}
 export APP_NAME="{{.Env.APP_NAME}}"
 
 if [[ -n "${PORT}" ]]; then

@@ -74,7 +74,7 @@ touch $HOME/.cfconfig
 CONFIG_FILE=$FACTOTUM/config.yaml
 if [[ ! -f $CONFIG_FILE ]]; then 
 cat <<EOF > $CONFIG_FILE
-{{ file.Read "/templates/install/config.yaml" }}
+{{ file.Read "/templates/install/config.yaml" | replaceAll "$" "\\$" }}
 EOF
 fi
 
