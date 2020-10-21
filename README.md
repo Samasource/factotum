@@ -39,7 +39,7 @@ Even if factotum is intended to be forked and customized to your own needs, you 
 ## Install factotum
 
 ```bash
-$ curl -sfL https://raw.githubusercontent.com/Samasource/factotum/master/bootstrap.sh | bash -
+$ curl -sfL https://raw.githubusercontent.com/Samasource/factotum/master/filesystem/templates/install/bootstrap.sh | bash -
 ```
 
 ### Installing to different name
