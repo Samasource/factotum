@@ -22,7 +22,6 @@ alias eks='eksctl'
 alias cf='codefresh'
 
 # export env vars
-export PATH="/root/bin:$PATH"
 $(export-context)
 export PATH="/root/bin/$CLOUD:/local/.factotum/bin:$PATH"
 export LC_ALL=en_US.UTF-8

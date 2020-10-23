@@ -21,6 +21,15 @@ function require_installed() {
 	fi
 }
 
+function log_verbose() {
+  [[ $VERBOSE == "true" ]] && echo $@
+}
+
+function run() {
+  log_verbose \$ $@
+  [[ $DRY_RUN == "true" ]] || "$@"
+}
+
 # This allows to pass arguments to factotum in the form --my-env-var=value and
 # they will be converted and exported as MY_ENV_VAR="value"
 function options_to_env() {
@@ -147,11 +156,11 @@ function use() {
 	container_id=$(docker ps --quiet --filter name="^/${DOCKER_CONTAINER}\$" --format '{{`{{ .ID }}`}}')
 	if [[ -n "$container_id" ]]; then
 		echo "# Attaching to existing ${DOCKER_CONTAINER} session ($container_id)"
-		docker exec -it "${DOCKER_EXEC_ARGS[@]}" "${DOCKER_CONTAINER}" zsh
+		run docker exec -it "${DOCKER_EXEC_ARGS[@]}" "${DOCKER_CONTAINER}" zsh
 	else
 		echo "# Starting new ${DOCKER_CONTAINER} session from ${DOCKER_IMAGE}"
 		echo "# Exposing port ${FACTOTUM_PORT}"
-		docker run "${DOCKER_ARGS[@]}" ${DOCKER_IMAGE}
+		run docker run "${DOCKER_ARGS[@]}" ${DOCKER_IMAGE}
 	fi
 }
 
@@ -163,6 +172,11 @@ function parse_args() {
 			shift
 			;;
 		-v | --verbose)
+			export VERBOSE=true
+			shift
+			;;
+		--dry-run)
+			export DRY_RUN=true
 			export VERBOSE=true
 			shift
 			;;
@@ -224,7 +238,7 @@ function login_ecr() {
 function stop() {
   DOCKER_CONTAINER="$APP_NAME-$CONTEXT"
 	echo "# Stopping ${DOCKER_CONTAINER}..."
-	exec docker kill ${DOCKER_CONTAINER} >/dev/null 2>&1
+	docker kill ${DOCKER_CONTAINER} >/dev/null 2>&1
 }
 
 function get_contexts() {
@@ -311,7 +325,7 @@ elif [[ "$target0" == "get" && (( "$target1" == "contexts" || "$target1" == "con
   exit
 else
   if [[ "$target0" == "use" || "$target0" == "stop" ]]; then
-    if [[ $# != 2 ]]; then
+    if [[ ${#targets[@]} < 2 ]]; then
       echo "Missing context argument"
     else
       export CONTEXT=$target1
