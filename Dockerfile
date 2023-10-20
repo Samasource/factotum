@@ -5,40 +5,27 @@ SHELL ["/bin/bash", "-c"]
 RUN ln -sf bash /bin/sh
 
 # shell tools
-RUN apt-get update && \
-    apt-get upgrade -y
-RUN apt-get install -y wget
-RUN apt-get install -y curl
-RUN apt-get install -y git
-RUN apt-get install -y unzip
-RUN apt-get install -y man-db
-RUN apt-get install -y manpages
-RUN apt-get install -y manpages-posix
-RUN apt-get install -y groff
-RUN apt-get install -y gcc
-RUN apt-get install -y vim
-RUN apt-get install -y uuid-runtime
-RUN apt-get install -y iproute2
-RUN apt-get install -y iputils-ping
-RUN apt-get install -y dnsutils
-RUN apt-get install -y gettext
-RUN apt-get install -y bsdmainutils
-RUN apt-get install -y netcat
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y zlib1g-dev wget curl git unzip man-db \
+        manpages manpages-posix groff gcc vim uuid-runtime \
+        iproute2 iputils-ping dnsutils gettext bsdmainutils netcat \
+        build-essential libssl-dev
 
 # zsh + oh-my-zsh
-RUN apt-get install -y zsh && \
-    apt-get install -y powerline fonts-powerline && \
+RUN apt install -y zsh && \
+    apt install -y powerline fonts-powerline && \
     sh -c $(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) && \
     git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
     git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k && \
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.zsh-syntax-highlighting" --depth 1
 
 # UTF-8 locale
-RUN apt-get install -y locales && \
+RUN apt install -y locales && \
     locale-gen "en_US.UTF-8"
 
 # golang
-ARG GO_VERSION=1.14.3
+ARG GO_VERSION=1.21.3
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 ENV GO111MODULE=on
@@ -50,17 +37,71 @@ RUN curl -fsL https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz \
 # node
 ARG NODE_VERSION=12
 RUN curl -fsL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - && \
-    apt-get install -y nodejs
+    apt install -y nodejs
 
-# python
-RUN apt-get install -y python-pip python3-pip python3-distutils
+# python 3.6
+RUN apt install -y python-pip python3-pip python3-distutils
+
+# python 3.7
+ARG PY37_VERSION=3.7.17
+RUN wget https://www.python.org/ftp/python/$PY37_VERSION/Python-$PY37_VERSION.tgz && \
+    tar xvf Python-$PY37_VERSION.tgz && \
+    cd Python-$PY37_VERSION && \
+    ./configure --enable-optimizations  && \
+     make install && \
+     # remove tgz
+     rm -f /Python-$PY37_VERSION.tgz && \
+     cd / && \ 
+     echo "alias python37=/Python-$PY37_VERSION/Python-$PY37_VERSION/python" >> ~/.bashrc && \
+    ./Python-$PY37_VERSION/python -m pip install --upgrade pip setuptools && \
+    ./Python-$PY37_VERSION/python -m pip install pip-audit virtualenv  
+# python 3.8
+ARG PY38_VERSION=3.8.18
+RUN wget https://www.python.org/ftp/python/$PY38_VERSION/Python-$PY38_VERSION.tgz && \
+    tar xvf Python-$PY38_VERSION.tgz && \
+    cd Python-$PY38_VERSION && \
+    ./configure --enable-optimizations  && \
+     make install && \
+     # remove tgz
+     rm -f /Python-$PY38_VERSION.tgz && \
+     cd / && \ 
+     echo "alias python38=/Python-$PY38_VERSION/Python-$PY38_VERSION/python" >> ~/.bashrc && \
+    ./Python-$PY38_VERSION/python -m pip install --upgrade pip setuptools && \
+    ./Python-$PY38_VERSION/python -m pip install pip-audit virtualenv  
+# python 3.9
+ARG PY39_VERSION=3.9.18
+RUN wget https://www.python.org/ftp/python/$PY39_VERSION/Python-$PY39_VERSION.tgz && \
+    tar xvf Python-$PY39_VERSION.tgz && \
+    cd Python-$PY39_VERSION && \
+    ./configure --enable-optimizations && \
+    make install && \
+    # remove tgz
+    rm -f /Python-$PY39_VERSION.tgz && \
+    cd / && \ 
+    echo "alias python39=/Python-$PY39_VERSION/Python-$PY39_VERSION/python" >> ~/.bashrc && \
+    ./Python-$PY39_VERSION/python -m pip install --upgrade pip setuptools && \
+    ./Python-$PY39_VERSION/python -m pip install pip-audit virtualenv 
+# python 3.10
+ARG PY310_VERSION=3.10.13
+RUN wget https://www.python.org/ftp/python/$PY310_VERSION/Python-$PY310_VERSION.tgz && \
+    tar xvf Python-$PY310_VERSION.tgz && \
+    cd Python-$PY310_VERSION && \
+    ./configure --enable-optimizations && \
+    make install && \
+    # remove tgz
+    rm -f /Python-$PY310_VERSION.tgz && \
+    cd / && \ 
+    echo "alias python310=/Python-$PY310_VERSION/python" >> ~/.bashrc && \
+    ./Python-$PY310_VERSION/python -m pip install --upgrade pip setuptools && \
+    ./Python-$PY310_VERSION/python -m pip install pip-audit virtualenv  
+    
 
 # gcloud
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    apt-get install -y apt-transport-https ca-certificates && \
+    apt install -y apt-transport-https ca-certificates && \
     curl -fsL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-    apt-get update && \
-    apt-get install -y google-cloud-sdk
+    apt update && \
+    apt install -y google-cloud-sdk
 
 # kubectl
 RUN curl -fsLO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl && \
@@ -86,7 +127,7 @@ RUN curl -fsL https://github.com/derailed/k9s/releases/download/v$K9S_VERSION/k9
     | tar xzv -C /usr/local/bin k9s
 
 # jq
-RUN apt-get install -y jq
+RUN apt install -y jq
 
 # python-yq (install as yq2, side-by-side with yq by Mike Farah)
 RUN pip install yq && \
@@ -97,7 +138,7 @@ RUN curl -fsL --output /usr/local/bin/yq https://github.com/mikefarah/yq/release
     chmod +x /usr/local/bin/yq
 
 # ksd (kubernetes secret decoder)
-RUN go get github.com/mfuentesg/ksd
+RUN go install github.com/mfuentesg/ksd@latest
 
 # terraform
 ARG TERRAFORM_VERSION=0.12.26
@@ -134,7 +175,7 @@ RUN HUB_NAME="hub-linux-amd64-2.12.8" && \
 RUN bash <( curl -sfL https://raw.githubusercontent.com/boz/kail/master/godownloader.sh) -b "$GOPATH/bin"
 
 # eksctl
-RUN curl -fsL "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && \
+RUN curl -fsL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && \
     mv /tmp/eksctl /usr/local/bin
 
 # gomplate
@@ -148,14 +189,14 @@ RUN curl -fsL https://github.com/codefresh-io/cli/releases/download/v$CODEFRESH_
     | tar xzv -C /usr/local/bin ./codefresh
 
 # postgresql-client
-RUN apt-get install -y postgresql-client
+RUN apt install -y postgresql-client
 
 # gh (github client)
-RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && \
-    apt-get install -y software-properties-common && \
+RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver keyserver.ubuntu.com --recv-key 23F3D4EA75716059 && \
+    apt install -y software-properties-common && \
     apt-add-repository https://cli.github.com/packages && \
-    apt-get update && \
-    apt-get install gh
+    apt update && \
+    apt install gh
 
 # tldr (alternative manpages for linux commands)
 RUN npm install -g tldr
@@ -169,8 +210,15 @@ RUN TMP=$(mktemp -d) && \
     ./aws/install && \
     rm -rf $TMP
 
+# argo-cli
+ARG ARGO_CLI_VERSION=3.4.12
+RUN curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.4.12/argo-linux-amd64.gz && \
+    gunzip argo-linux-amd64.gz && \
+    chmod +x argo-linux-amd64 && \
+    mv ./argo-linux-amd64 /usr/local/bin/argo
+
 # figurine
-RUN go get github.com/arsham/figurine
+RUN go install github.com/arsham/figurine@latest
 
 # finalize
 COPY filesystem/ /
